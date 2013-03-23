@@ -98,6 +98,7 @@ void TcpServer::slotReadyRead()
         for(int i = 0; i != size; ++i)
         {
             in >> name;
+            qDebug() << name;
             in >> path;
             listNames.append(name);
         }
