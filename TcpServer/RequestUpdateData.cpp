@@ -46,5 +46,5 @@ RequestUpdateData::RequestUpdateData(QList<QString> list, QMap<QString, QByteArr
 void RequestUpdateData::run()
 {
     pTcpSocket_->write(bytes_);
-    pTcpSocket_->waitForBytesWritten();
+    pTcpSocket_->waitForBytesWritten(100000);
 }
