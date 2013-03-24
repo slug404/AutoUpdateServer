@@ -2,6 +2,7 @@
 #define TCPSERVER_H
 
 #include <QTcpServer>
+#include <QMutex>
 #include "RunnableBase.h"
 #include "Log4Qt/Logger"
 
@@ -41,13 +42,21 @@ private:
 
 private:
     QThreadPool *pThreadPool_;
+    //文件名和对应数据
     QMap<QString, QByteArray> pMap_fileName_data_;
     QMap<FileInfor, QByteArray> pMap_updateDataBuffer_;
+    //socket描述符和tcp socket
     QMap<int, QTcpSocket*> pMap_socketDescriptor_tcpSocket_;
+    //socket描述符和对应模块大小
     QMap<int, int> pMap_socketDescriptor_blockSize_;
+    //服务端的xml
     QByteArray updateInfor_;
     QByteArray bytes_;
+    //序列化file和对应的path
     QByteArray serializeData_;
+
+    //锁
+    QMutex mutex_;
 };
 
 #endif // TCPSERVER_H

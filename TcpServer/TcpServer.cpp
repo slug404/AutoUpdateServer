@@ -34,6 +34,7 @@ bool TcpServer::startServer()
 
 void TcpServer::incomingConnection(int handle)
 {
+    qDebug() << "in comning connection";
     qDebug() << tr("new connect  : ").arg(QString::number(gCountConnect++)) ;
     QTcpSocket *pTcpSocket = new QTcpSocket(this);
     if(!pTcpSocket->setSocketDescriptor(handle))
@@ -52,8 +53,12 @@ void TcpServer::slotReadyRead()
     int socketDescriptor =  pTcpSocket->socketDescriptor();
     if(pMap_socketDescriptor_tcpSocket_.contains(socketDescriptor))
     {
-        qDebug() << "find socketDescriptor!";
+        //qDebug() << "find socketDescriptor!";
         pTcpSocket = pMap_socketDescriptor_tcpSocket_.value(socketDescriptor);
+    }
+    else
+    {
+        qDebug() << "can't find sockedescriptor!";
     }
 
     QDataStream in(pTcpSocket);
@@ -61,6 +66,8 @@ void TcpServer::slotReadyRead()
 
     qint32 blockSize;
 
+    //这个部分要加锁
+    mutex_.lock();
     if(0 == pMap_socketDescriptor_blockSize_.value(socketDescriptor))
     {
         if(pTcpSocket->bytesAvailable() < (qint32)sizeof(qint32))
@@ -69,13 +76,17 @@ void TcpServer::slotReadyRead()
         }
         in >> blockSize;
         pMap_socketDescriptor_blockSize_[socketDescriptor] = blockSize;
+        qDebug() << "receive request datagram size is:" << blockSize;
     }
+    mutex_.unlock();
 
     qint32 currentSize = pTcpSocket->bytesAvailable();
-    if(currentSize < blockSize)
+    if(currentSize < pMap_socketDescriptor_blockSize_[socketDescriptor])
     {
+        qDebug() << "currentSize < blockSize" <<"       " << "currentSize:" <<currentSize << "pMap_socketDescriptor_blockSize_[socketDescriptor]:"<<pMap_socketDescriptor_blockSize_[socketDescriptor];
         return;
     }
+
     qDebug() << "datagram size is" << blockSize;
     qint32 type;
     in >> type;
@@ -91,15 +102,13 @@ void TcpServer::slotReadyRead()
         qDebug() << "request data message";
         int size;
         in >> size;
-
+        qDebug() << "need to update files : " <<size;
         QList<QString> listNames;
         QString name;
-        QString path;
         for(int i = 0; i != size; ++i)
         {
             in >> name;
             qDebug() << name;
-            in >> path;
             listNames.append(name);
         }
 
@@ -207,16 +216,7 @@ void TcpServer::traveDirectory(const QString &str, const QStringList &filterFold
             QString path = str + dir.separator() + fileName;
 
             //Mind+这个名字在xml里面有问题, 特殊情况特殊处理
-            if("Mind+.exe" == fileName)
-            {
-                fileName = "Mind.exe";
-            }
-            else if("libstdc++-6.dll" == fileName)
-            {
-                //过滤掉不更新的
-                continue;
-            }
-            else if("AutoUpdateServer.exe" == fileName)
+            if("AutoUpdateServer.exe" == fileName)
             {
                 //过滤掉不更新的
                 continue;
@@ -239,7 +239,7 @@ void TcpServer::traveDirectory(const QString &str, const QStringList &filterFold
             }
 
             QByteArray fileData = file.readAll();
-            pMap_fileName_data_[fileName.replace(".", "__")] = fileData;
+            pMap_fileName_data_[fileName] = fileData;
 
             file.close();
         }
