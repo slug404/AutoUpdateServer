@@ -229,6 +229,10 @@ void TcpServer::traveDirectory(const QString &str, const QStringList &filterFold
             {
                 continue;
             }
+            else if("Thumbs.db" == fileName)
+            {
+                continue;
+            }
 
             QFile file(path);
             if(!file.open(QFile::ReadOnly))
