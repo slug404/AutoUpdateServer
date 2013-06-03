@@ -218,18 +218,41 @@ void TcpServer::traveDirectory(const QString &str, const QStringList &filterFold
             //Mind+这个名字在xml里面有问题, 特殊情况特殊处理
             if("AutoUpdateServer.exe" == fileName)
             {
-                //过滤掉不更新的
-                continue;
-            }
-            else if("server.xml" == fileName)
-            {
                 continue;
             }
             else if("AutoCreateVersions.exe" == fileName)
             {
                 continue;
             }
+            else if("server.xml" == fileName)
+            {
+                continue;
+            }
+            else if("serialize.dat" == fileName)
+            {
+                continue;
+            }
+            else if ("libLog4Qt.dll" == fileName)
+            {
+                continue;
+            }
+            else if("setting.ini" == fileName)
+            {
+                continue;
+            }
+            else if("MindUpgrader.exe" == fileName)
+            {
+                continue;
+            }
             else if("Thumbs.db" == fileName)
+            {
+                continue;
+            }
+            else if(".DS_Store" == fileName)
+            {
+                continue;
+            }
+            else if("Buffer.mpb" == fileName)
             {
                 continue;
             }
