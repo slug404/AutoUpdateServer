@@ -2,8 +2,8 @@
 #include <QApplication>
 #include <QDebug>
 #include "TcpServer/TcpServer.h"
-#include "Log4Qt/Logger"
-#include "Log4Qt/BasicConfigurator"
+//#include "Log4Qt/Logger"
+//#include "Log4Qt/BasicConfigurator"
 
 int main(int argc, char *argv[])
 {
