@@ -2,13 +2,13 @@
 #define REQUESTEXECUTABLE_H
 
 #include "RunnableBase.h"
-#include "Log4Qt/Logger"
+//#include "Log4Qt/Logger"
 class QTcpSocket;
 
 class RequestExecutable : public RunnableBase
 {
     Q_OBJECT
-    LOG4QT_DECLARE_QCLASS_LOGGER
+	//LOG4QT_DECLARE_QCLASS_LOGGER
 
 public:
     explicit RequestExecutable(const QByteArray &bytes, QTcpSocket *p);

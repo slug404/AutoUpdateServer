@@ -11,10 +11,10 @@ QT += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = nimei
+TARGET = AutoUpadteServer
 TEMPLATE = app
 
-LIBS += -llibLog4Qt
+#LIBS += -llibLog4Qt
 
 SOURCES += main.cpp\
         WidgetMain.cpp \

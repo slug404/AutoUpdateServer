@@ -9,11 +9,17 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Log4Qt::BasicConfigurator::configure();
+	//Log4Qt::BasicConfigurator::configure();
     //Log4Qt::Logger *pLog = Log4Qt::Logger::rootLogger();
 
     WidgetMain w;
     TcpServer *pTcpServer = new TcpServer();
+
+	if(2 == argc)
+	{
+		pTcpServer->setListenPort(QString(argv[1]).toInt());
+	}
+
     if(pTcpServer->startServer())
     {
         qDebug() << "tcp server start success!";

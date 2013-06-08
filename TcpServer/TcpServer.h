@@ -4,7 +4,7 @@
 #include <QTcpServer>
 #include <QMutex>
 #include "RunnableBase.h"
-#include "Log4Qt/Logger"
+//#include "Log4Qt/Logger"
 
 class QThreadPool;
 struct FileInfor;
@@ -13,7 +13,7 @@ class QTcpSocket;
 class TcpServer : public QTcpServer
 {
     Q_OBJECT
-    LOG4QT_DECLARE_QCLASS_LOGGER
+	//LOG4QT_DECLARE_QCLASS_LOGGER
 
 public:
     enum RequestType
@@ -25,6 +25,7 @@ public:
 
     explicit TcpServer(QObject *parent = 0);
     bool startServer();
+	void setListenPort(quint16 port);
 
 signals:
 
@@ -57,6 +58,7 @@ private:
 
     //锁
     QMutex mutex_;
+	quint16 port_;
 };
 
 #endif // TCPSERVER_H

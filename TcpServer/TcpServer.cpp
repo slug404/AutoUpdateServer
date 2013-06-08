@@ -15,6 +15,7 @@ long gCountConnect = 0;
 
 TcpServer::TcpServer(QObject *parent)
     : QTcpServer(parent)
+	, port_(8769)
 {
     initData();
 
@@ -24,12 +25,18 @@ TcpServer::TcpServer(QObject *parent)
 
 bool TcpServer::startServer()
 {
-    if(!this->listen(QHostAddress::Any, 8769))
+	if(!this->listen(QHostAddress::Any, port_))
     {
-        logger()->debug("tcp server bind fail!");
+		qDebug() << ("tcp server bind fail!");
         return false;
     }
-    return true;
+	qDebug() << "listen port: " << port_;
+	return true;
+}
+
+void TcpServer::setListenPort(quint16 port)
+{
+	port_ = port;
 }
 
 void TcpServer::incomingConnection(int handle)
@@ -114,13 +121,13 @@ void TcpServer::slotReadyRead()
 
         if(listNames.isEmpty())
         {
-            logger()->debug("request update files list is empty");
+			qDebug() << ("request update files list is empty");
         }
         pRunnable = new RequestUpdateData(listNames, &pMap_fileName_data_ , serializeData_, pTcpSocket);
     }
     else if(Executable == type)
     {
-        logger()->debug("request executable");
+		qDebug() << ("request executable");
         pRunnable = new RequestExecutable(bytes_, pTcpSocket);
     }
     else
@@ -148,7 +155,7 @@ void TcpServer::initData()
         return;
     }
     QString buffer = file.readAll();
-    logger()->debug(buffer);
+	qDebug() << (buffer);
 
     QDataStream out(&updateInfor_, QIODevice::WriteOnly);
     out << (qint32)0;
@@ -182,7 +189,7 @@ void TcpServer::initData()
         return;
     }
     QByteArray bytes = file2.readAll();
-    logger()->debug(tr("size of Mind+.exe is :") + QString::number(bytes.size()));
+	qDebug() << (tr("size of Mind+.exe is :") + QString::number(bytes.size()));
 
     QDataStream out2(&bytes_, QIODevice::WriteOnly);
     out2 << (qint32)0;
@@ -192,7 +199,7 @@ void TcpServer::initData()
     //计算校验值
     QByteArray md5 = QCryptographicHash::hash(bytes, QCryptographicHash::Md5).toHex();
     out2 << md5;
-    logger()->debug(QString(md5));
+	qDebug() << (QString(md5));
     out2.device()->seek(0);
     qint32 size2 = bytes_.size() - (qint32)sizeof(qint32);
     out2 << (qint32)size2;
@@ -261,7 +268,7 @@ void TcpServer::traveDirectory(const QString &str, const QStringList &filterFold
             if(!file.open(QFile::ReadOnly))
             {
                 file.close();
-                logger()->debug("file open error");
+				qDebug() << ("file open error");
                 continue;
             }
 
