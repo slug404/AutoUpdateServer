@@ -9,6 +9,7 @@ class ThreadObjectBase : public QObject
 {
 	Q_OBJECT
 public:
+	explicit ThreadObjectBase(QObject *parent = 0);
 	explicit ThreadObjectBase(QMap<FileInfor, QByteArray> *pDataBuffer, QObject *parent = 0);
 	
 	inline void setSocketDescriptor(int socketDescriptor) { tcpSocketDescriptor_ = socketDescriptor ;}
