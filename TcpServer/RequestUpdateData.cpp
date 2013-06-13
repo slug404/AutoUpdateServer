@@ -2,6 +2,7 @@
 #include <QTcpSocket>
 #include <QDomDocument>
 #include <QDomNode>
+#include <QDataStream>
 
 RequestUpdateData::RequestUpdateData(QList<QString> list, QMap<QString, QByteArray> *pUpdateData, QByteArray &serialize, QTcpSocket *tcpSocket)
     : pTcpSocket_(tcpSocket)
