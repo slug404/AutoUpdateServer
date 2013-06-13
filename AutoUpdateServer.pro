@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     TcpServer/RunnableBase.cpp \
     TcpServer/RequestUpdateInfor.cpp \
     TcpServer/RequestUpdateData.cpp \
-    TcpServer/RequestExecutable.cpp
+    TcpServer/RequestExecutable.cpp \
+    Thread/ThreadObjectBase.cpp
 
 HEADERS  += WidgetMain.h \
 	dptr.h \
@@ -30,6 +31,8 @@ HEADERS  += WidgetMain.h \
     TcpServer/RunnableBase.h \
     TcpServer/RequestUpdateInfor.h \
     TcpServer/RequestUpdateData.h \
-    TcpServer/RequestExecutable.h
+    TcpServer/RequestExecutable.h \
+    Thread/ThreadObjectBase.h \
+    Common.h
 
 FORMS    += WidgetMain.ui
