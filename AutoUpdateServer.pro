@@ -15,6 +15,9 @@ TARGET = AutoUpadteServer
 TEMPLATE = app
 
 #LIBS += -llibLog4Qt
+INCLUDEPATH += . \
+    ./TcpServer \
+    ./Thread
 
 SOURCES += main.cpp\
         WidgetMain.cpp \
@@ -23,7 +26,11 @@ SOURCES += main.cpp\
     TcpServer/RequestUpdateInfor.cpp \
     TcpServer/RequestUpdateData.cpp \
     TcpServer/RequestExecutable.cpp \
-    Thread/ThreadObjectBase.cpp
+    Thread/ThreadObjectBase.cpp \
+    Thread/ThreadObjectUpdateInfor.cpp \
+    Thread/ThreadObjectUpdateData.cpp
+#    qabstractsocket.cpp \
+#    qiodevice.cpp
 
 HEADERS  += WidgetMain.h \
 	dptr.h \
@@ -33,6 +40,8 @@ HEADERS  += WidgetMain.h \
     TcpServer/RequestUpdateData.h \
     TcpServer/RequestExecutable.h \
     Thread/ThreadObjectBase.h \
-    Common.h
+    Common.h \
+    Thread/ThreadObjectUpdateInfor.h \
+    Thread/ThreadObjectUpdateData.h
 
 FORMS    += WidgetMain.ui
