@@ -15,28 +15,28 @@ long gCountConnect = 0;
 
 TcpServer::TcpServer(QObject *parent)
     : QTcpServer(parent)
-	, port_(8769)
+    , port_(8769)
 {
     initData();
 
-	//pThreadPool_ = new QThreadPool(this);
-	//pThreadPool_->setMaxThreadCount(QThread::idealThreadCount());
+    //pThreadPool_ = new QThreadPool(this);
+    //pThreadPool_->setMaxThreadCount(QThread::idealThreadCount());
 }
 
 bool TcpServer::startServer()
 {
-	if(!this->listen(QHostAddress::Any, port_))
+    if(!this->listen(QHostAddress::Any, port_))
     {
-		qDebug() << ("tcp server bind fail!");
+        qDebug() << ("tcp server bind fail!");
         return false;
     }
-	qDebug() << "listen port: " << port_;
-	return true;
+    qDebug() << "listen port: " << port_;
+    return true;
 }
 
 void TcpServer::setListenPort(quint16 port)
 {
-	port_ = port;
+    port_ = port;
 }
 
 void TcpServer::incomingConnection(int handle)
@@ -90,8 +90,8 @@ void TcpServer::slotReadyRead()
     qint32 currentSize = pTcpSocket->bytesAvailable();
     if(currentSize < pMap_socketDescriptor_blockSize_[socketDescriptor])
     {
-		qDebug() << "currentSize < blockSize" <<"       " << "currentSize:" <<currentSize <<
-					"pMap_socketDescriptor_blockSize_[socketDescriptor]:"<<pMap_socketDescriptor_blockSize_[socketDescriptor];
+        qDebug() << "currentSize < blockSize" <<"       " << "currentSize:" <<currentSize <<
+                    "pMap_socketDescriptor_blockSize_[socketDescriptor]:"<<pMap_socketDescriptor_blockSize_[socketDescriptor];
         return;
     }
 
@@ -99,12 +99,12 @@ void TcpServer::slotReadyRead()
     qint32 type;
     in >> type;
 
-	//RunnableBase *pRunnable = NULL;
+    //RunnableBase *pRunnable = NULL;
     if(RequestXml == type)
     {
         qDebug() << "request xml message";
-		//pRunnable = new RequestUpdateInfor(updateInfor_, pTcpSocket);
-		pTcpSocket->write(updateInfor_);
+        //pRunnable = new RequestUpdateInfor(updateInfor_, pTcpSocket);
+        pTcpSocket->write(updateInfor_);
     }
     else if(RequestData == type)
     {
@@ -123,49 +123,51 @@ void TcpServer::slotReadyRead()
 
         if(listNames.isEmpty())
         {
-			qDebug() << ("request update files list is empty");
+            qDebug() << ("request update files list is empty");
         }
-		//pRunnable = new RequestUpdateData(listNames, &pMap_fileName_data_ , serializeData_, pTcpSocket);
-		{
-			QDataStream out(&bytes_, QIODevice::WriteOnly);
-			out.setVersion(QDataStream::Qt_4_8);
-			out << (qint32)0;
-			out << (qint32)1; //RequestData
-			out << (qint32)listNames.size(); //也是用来占位, 具体返回的数据的数量还需要看下面的计算
-			int count = 0;
-			for(int i = 0; i != listNames.size(); ++i)
-			{
-				QString name = listNames.at(i);
+        //pRunnable = new RequestUpdateData(listNames, &pMap_fileName_data_ , serializeData_, pTcpSocket);
+        {
+            QDataStream out(&bytes_, QIODevice::WriteOnly);
+            out.setVersion(QDataStream::Qt_4_8);
+            out << (qint32)0;
+            out << (qint32)1; //RequestData
+            out << (qint32)listNames.size(); //也是用来占位, 具体返回的数据的数量还需要看下面的计算
+            int count = 0;
+            for(int i = 0; i != listNames.size(); ++i)
+            {
+                QString name = listNames.at(i);
 
-				if(!pMap_fileName_data_.contains(name))
-				{
-					qDebug() << "update data don't contains " << name;
-					continue;
-				}
+                if(!pMap_fileName_data_.contains(name))
+                {
+                    qDebug() << "update data don't contains " << name;
+                    continue;
+                }
 
-				QByteArray data = pMap_fileName_data_.value(name);
-				out << name;
-				out << data;
-				++count;
-			}
-			if(listNames.size() != count)
-			{
-				out.device()->seek(2 * (qint32)sizeof(qint32));
-				out << count;
-			}
+                QByteArray data = pMap_fileName_data_.value(name);
+                out << name;
+                out << data;
+                ++count;
+            }
+            if(listNames.size() != count)
+            {
+                out.device()->seek(2 * (qint32)sizeof(qint32));
+                out << count;
+            }
 
-			//在这里加入序列化后的数据
-			out << serializeData_;
+            //在这里加入序列化后的数据
+            out << serializeData_;
 
-			out.device()->seek(0);
-			qint32 size = bytes_.size() - (qint32)sizeof(qint32);
-			out << (qint32)size;
-		}
+            out.device()->seek(0);
+            qint32 size = bytes_.size() - (qint32)sizeof(qint32);
+            out << (qint32)size;
+
+            pTcpSocket->write(bytes_);
+        }
     }
     else if(Executable == type)
     {
-		qDebug() << ("request executable");
-	//	pRunnable = new RequestExecutable(bytes_, pTcpSocket);
+        qDebug() << ("request executable");
+    //	pRunnable = new RequestExecutable(bytes_, pTcpSocket);
 
     }
     else
@@ -175,7 +177,7 @@ void TcpServer::slotReadyRead()
     }
 //    pRunnable->setSocketDescriptor(socketDescriptor);
 //    pRunnable->setAutoDelete(true);    //应该是能delete的, 虚连接是在数据链路层的事情, 那个不管我们的是, 应该只要不调用close, 就不会断开
-	//pThreadPool_->start(pRunnable);
+    //pThreadPool_->start(pRunnable);
     pMap_socketDescriptor_blockSize_[socketDescriptor] = 0;
 }
 
@@ -193,7 +195,7 @@ void TcpServer::initData()
         return;
     }
     QString buffer = file.readAll();
-	qDebug() << (buffer);
+    qDebug() << (buffer);
 
     QDataStream out(&updateInfor_, QIODevice::WriteOnly);
     out << (qint32)0;
@@ -227,7 +229,7 @@ void TcpServer::initData()
         return;
     }
     QByteArray bytes = file2.readAll();
-	qDebug() << (tr("size of Mind+.exe is :") + QString::number(bytes.size()));
+    qDebug() << (tr("size of Mind+.exe is :") + QString::number(bytes.size()));
 
     QDataStream out2(&bytes_, QIODevice::WriteOnly);
     out2 << (qint32)0;
@@ -237,7 +239,7 @@ void TcpServer::initData()
     //计算校验值
     QByteArray md5 = QCryptographicHash::hash(bytes, QCryptographicHash::Md5).toHex();
     out2 << md5;
-	qDebug() << (QString(md5));
+    qDebug() << (QString(md5));
     out2.device()->seek(0);
     qint32 size2 = bytes_.size() - (qint32)sizeof(qint32);
     out2 << (qint32)size2;
@@ -306,7 +308,7 @@ void TcpServer::traveDirectory(const QString &str, const QStringList &filterFold
             if(!file.open(QFile::ReadOnly))
             {
                 file.close();
-				qDebug() << ("file open error");
+                qDebug() << ("file open error");
                 continue;
             }
 
