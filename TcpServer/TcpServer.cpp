@@ -222,29 +222,6 @@ void TcpServer::initData()
     aaaaaa >> mapTest;
     qDebug() << "serialize map :" << mapTest;
 
-    QFile file2("Mind+.exe");
-    if(!file2.open(QFile::ReadOnly))
-    {
-        qDebug() << "can't open file Mind+.exe";
-        return;
-    }
-    QByteArray bytes = file2.readAll();
-    qDebug() << (tr("size of Mind+.exe is :") + QString::number(bytes.size()));
-
-    QDataStream out2(&bytes_, QIODevice::WriteOnly);
-    out2 << (qint32)0;
-    out2 << (qint32)Executable;
-    out2 << QString("Mind+.exe");
-    out2 << bytes;
-    //计算校验值
-    QByteArray md5 = QCryptographicHash::hash(bytes, QCryptographicHash::Md5).toHex();
-    out2 << md5;
-    qDebug() << (QString(md5));
-    out2.device()->seek(0);
-    qint32 size2 = bytes_.size() - (qint32)sizeof(qint32);
-    out2 << (qint32)size2;
-    file2.close();
-
     QStringList list;
     list << "./resource/tools";
     traveDirectory("./", list);
@@ -252,7 +229,6 @@ void TcpServer::initData()
 
 void TcpServer::traveDirectory(const QString &str, const QStringList &filterFolderPaths)
 {
-    //好了明天的工作就是开始遍历数据, 然后生成xml
     //先处理files
     QDir dir(str);
     dir.setFilter(QDir::Files);
