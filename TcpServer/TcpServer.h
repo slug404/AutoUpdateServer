@@ -1,10 +1,9 @@
 #ifndef TCPSERVER_H
 #define TCPSERVER_H
 
+#include <mutex>
 #include <QTcpServer>
-#include <QMutex>
 #include "RunnableBase.h"
-//#include "Log4Qt/Logger"
 
 class QThreadPool;
 struct FileInfor;
@@ -13,7 +12,7 @@ class QTcpSocket;
 class TcpServer : public QTcpServer
 {
     Q_OBJECT
-	//LOG4QT_DECLARE_QCLASS_LOGGER
+    //LOG4QT_DECLARE_QCLASS_LOGGER
 
 public:
     enum RequestType
@@ -25,7 +24,7 @@ public:
 
     explicit TcpServer(QObject *parent = 0);
     bool startServer();
-	void setListenPort(quint16 port);
+    void setListenPort(quint16 port);
 
 signals:
 
@@ -40,6 +39,7 @@ private slots:
 private:
     void initData();
     void traveDirectory(const QString &str, const QStringList &filterFolderPaths);
+    void respones(int socketDescriptor, int type, QTcpSocket *pTcpSocket, QDataStream &in);
 
 private:
     QThreadPool *pThreadPool_;
@@ -57,8 +57,8 @@ private:
     QByteArray serializeData_;
 
     //锁
-    QMutex mutex_;
-	quint16 port_;
+    std::mutex mutex_;
+    quint16 port_;
 };
 
 #endif // TCPSERVER_H
